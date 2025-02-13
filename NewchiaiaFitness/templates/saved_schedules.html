@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedulazioni Salvate</title>
+</head>
+<body>
+    <h1>Schedulazioni Salvate</h1>
+    {% for category, files in categories.items() %}
+        <h2>{{ category }}</h2>
+        <ul>
+            {% for file in files %}
+                <li><a href="{{ url_for('download_schedule', category=category, filename=file) }}">{{ file }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>

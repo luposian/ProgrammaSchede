@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creazione Scheda Allenamento</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 60%; margin: auto; }
+        .input-group { margin-bottom: 10px; }
+        .superserie { background-color: lightblue; padding: 5px; margin-top: 5px; }
+        .circuito { background-color: lightcoral; padding: 5px; margin-top: 5px; }
+        .circuito-header { background-color: darkorange; padding: 5px; font-weight: bold; margin-top: 5px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Inserisci i dettagli della scheda</h2>
+        <form action="/" method="POST">
+            <label for="nome_cliente">Nome Cliente:</label>
+            <input type="text" name="nome_cliente" required><br>
+            <label for="scadenza">Scadenza Scheda:</label>
+            <input type="date" name="scadenza" required><br>
+            <label for="category">Categoria:</label>
+            <input type="text" name="category" required><br>
+            
+            <div id="allenamenti"></div>
+            
+            <button type="button" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button>
+            <br><br>
+            <button type="submit">Genera Scheda</button>
+        </form>
+    </div>
+
+    <script>
+        let allenamentiContainer = document.getElementById('allenamenti');
+        let allenamentoIndex = 0;
+        let inCircuito = false;
+
+        function aggiungiAllenamento() {
+            let divAllenamento = document.createElement('div');
+            divAllenamento.classList.add("allenamento");
+            divAllenamento.innerHTML = `
+                <h3>Allenamento ${allenamentoIndex + 1}</h3>
+                <div id="esercizi_${allenamentoIndex}"></div>
+                <button type="button" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
+                <button type="button" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
+                <button type="button" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
+                <button type="button" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
+            `;
+            allenamentiContainer.appendChild(divAllenamento);
+            allenamentoIndex++;
+        }
+        
+        function aggiungiEsercizio(index, tipo = "Normale") {
+            let eserciziContainer = document.getElementById(`esercizi_${index}`);
+            let div = document.createElement('div');
+            div.classList.add("input-group");
+            if (tipo === "Superserie") div.classList.add("superserie");
+            if (tipo === "Circuito") div.classList.add("circuito");
+
+            div.innerHTML = `
+                <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
+                <input type="number" name="serie_${index}[]" placeholder="Serie" required>
+                <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
+                <input type="hidden" name="tipo_${index}[]" value="${tipo}">
+            `;
+            eserciziContainer.appendChild(div);
+        }
+
+        function aggiungiSuperserie(index) {
+            aggiungiEsercizio(index, "Superserie");
+            aggiungiEsercizio(index, "Superserie");
+        }
+        
+        function iniziaCircuito(index) {
+            inCircuito = true;
+            let eserciziContainer = document.getElementById(`esercizi_${index}`);
+            let divHeader = document.createElement('div');
+            divHeader.classList.add("circuito-header");
+            divHeader.innerHTML = "Circuito";
+            eserciziContainer.appendChild(divHeader);
+            document.getElementById(`terminaCircuito_${index}`).style.display = 'inline';
+        }
+        
+        function terminaCircuito(index) {
+            inCircuito = false;
+            document.getElementById(`terminaCircuito_${index}`).style.display = 'none';
+            let divSpazio = document.createElement('div');
+            divSpazio.style.marginBottom = '15px';
+            document.getElementById(`esercizi_${index}`).appendChild(divSpazio);
+        }
+        
+        function aggiungiEsercizio(index, tipo = "Normale") {
+            let eserciziContainer = document.getElementById(`esercizi_${index}`);
+            let div = document.createElement('div');
+            div.classList.add("input-group");
+            if (inCircuito) tipo = "Circuito";
+            if (tipo === "Superserie") div.classList.add("superserie");
+            if (tipo === "Circuito") div.classList.add("circuito");
+
+            div.innerHTML = `
+                <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
+                <input type="number" name="serie_${index}[]" placeholder="Serie" required>
+                <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
+                <input type="hidden" name="tipo_${index}[]" value="${tipo}">
+            `;
+            eserciziContainer.appendChild(div);
+        }
+    </script>
+</body>
+</html>
