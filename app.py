@@ -81,7 +81,7 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     
     x_offset_cover = 155
     pdf.set_xy(x_offset_cover, 20)
-    logo_path = "C:/Users/lucio/Desktop/NewchiaiaFitness/LogoNewChiaiaFitness.png"
+    logo_path = "LogoNewChiaiaFitness.png"
     pdf.image(logo_path, x=x_offset_cover + 10, y=20, w=110)
     pdf.ln(70)
 
