@@ -23,9 +23,10 @@ class Cliente(db.Model):
     scadenza = db.Column(db.Date, nullable=False)
     scheda_pdf = db.Column(db.String(200), nullable=True)
 
-    # Creazione delle tabelle se non esistono
- with app.app_context():
-    db.create_all()
+# Creazione della tabella se non esiste
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
 
      
     def __repr__(self):
