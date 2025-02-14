@@ -33,10 +33,36 @@
         .delete-button:hover {
             background-color: darkred;
         }
+        .manage-clients-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .manage-clients-button:hover {
+            background-color: #218838;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Gestione Clienti</h1>
+    <a href="/" class="back-button">Torna alla Home</a>
+    <a href="/clienti" class="manage-clients-button">Vai alla gestione clienti</a>
     <table>
         <tr>
             <th>Nome</th>
