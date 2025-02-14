@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creazione Scheda Allenamento</title>
+     <title>Creazione Scheda Allenamento</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; }
         .container { width: 60%; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
-        .input-group { margin-bottom: 10px; }
-        .superserie { background-color: lightblue; padding: 5px; margin-top: 5px; }
-        .circuito { background-color: lightcoral; padding: 5px; margin-top: 5px; }
-        .circuito-header { background-color: darkorange; padding: 5px; font-weight: bold; margin-top: 5px; text-align: center; }
-        .btn { padding: 10px; border: none; cursor: pointer; margin: 5px; border-radius: 5px; }
+        .input-group { margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; }
+        .input-group label { font-weight: bold; margin-bottom: 5px; }
+        .input-group input { width: 80%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { padding: 10px; border: none; cursor: pointer; margin: 10px; border-radius: 5px; }
         .btn-primary { background-color: #007BFF; color: white; }
         .btn-danger { background-color: #dc3545; color: white; }
         .btn-success { background-color: #28a745; color: white; }
@@ -22,14 +21,22 @@
         <h2>Inserisci i dettagli della scheda</h2>
         <a href="/clienti" class="btn btn-primary">Vai alla gestione clienti</a>
         <form action="/" method="POST">
-            <label for="nome_cliente">Nome Cliente:</label>
-            <input type="text" name="nome_cliente" required><br>
-            <label for="email">Email Cliente:</label>
-            <input type="email" name="email" required><br>
-            <label for="scadenza">Scadenza Scheda:</label>
-            <input type="date" name="scadenza" required><br>
-            <label for="category">Categoria:</label>
-            <input type="text" name="category" required><br>
+            <div class="input-group">
+                <label for="nome_cliente">Nome Cliente:</label>
+                <input type="text" name="nome_cliente" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email Cliente:</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="scadenza">Scadenza Scheda:</label>
+                <input type="date" name="scadenza" required>
+            </div>
+            <div class="input-group">
+                <label for="category">Categoria:</label>
+                <input type="text" name="category" required>
+            </div>
             
             <div id="allenamenti"></div>
             
