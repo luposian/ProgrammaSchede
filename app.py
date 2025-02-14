@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
@@ -9,9 +11,19 @@ app = Flask(__name__)
 
 # Configura il database con PostgreSQL su Render
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://clienti_db_user:vLLLRAV1IVQmKWtj29KV1ckdMJoIZSr8@dpg-cunbbi8gph6c73eq88lg-a.frankfurt-postgres.render.com/clienti_db'
+# 🔥 Aggiungi queste configurazioni per evitare errori di timeout
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': 10,         # Numero massimo di connessioni nel pool
+    'max_overflow': 5,       # Connessioni extra se il pool è pieno
+    'pool_timeout': 30,      # Tempo massimo di attesa per una connessione
+    'pool_recycle': 1800,    # Ricicla le connessioni dopo 30 minuti
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+# Configura un pool di connessioni con pre-ping
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], pool_pre_ping=True)
+db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
+
 
 # Modello della tabella Cliente
 class Cliente(db.Model):
