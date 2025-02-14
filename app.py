@@ -52,6 +52,10 @@ def index():
         
         pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
 
+                return send_file(pdf_path, as_attachment=True)
+    
+    return render_template("index.html")
+
         # Salva il cliente nel database
         nuovo_cliente = Cliente(
             nome=nome_cliente,
@@ -61,10 +65,8 @@ def index():
         )
         db.session.add(nuovo_cliente)
         db.session.commit()
-        
-        return send_file(pdf_path, as_attachment=True)
-    
-    return render_template("index.html")
+
+
 
 @app.route('/clienti')
 def clienti():
@@ -79,7 +81,6 @@ def elimina_cliente(cliente_id):
         db.session.commit()
     return redirect(url_for('clienti'))
 
-pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
     
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
