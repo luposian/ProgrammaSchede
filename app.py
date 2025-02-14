@@ -40,6 +40,11 @@ def index():
         scadenza = request.form.get('scadenza', 'Senza Scadenza')
         category = request.form.get('category', 'Generale')
         email_destinatario = request.form.get('email')
+
+                # Salva il cliente nel database
+        nuovo_cliente = Cliente(nome=nome_cliente,email=email_destinatario,scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),scheda_pdf=pdf_path)
+        db.session.add(nuovo_cliente)
+        db.session.commit()
         
         allenamenti = []
         for i in range(3):
@@ -56,15 +61,7 @@ def index():
     
     return render_template("index.html")
 
-        # Salva il cliente nel database
-        nuovo_cliente = Cliente(
-            nome=nome_cliente,
-            email=email_destinatario,
-            scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
-            scheda_pdf=pdf_path
-        )
-        db.session.add(nuovo_cliente)
-        db.session.commit()
+
 
 
 
