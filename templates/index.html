@@ -4,22 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creazione Scheda Allenamento</title>
-    <a href="/clienti" class="manage-clients-button">Vai alla gestione clienti</a>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 60%; margin: auto; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; }
+        .container { width: 60%; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
         .input-group { margin-bottom: 10px; }
         .superserie { background-color: lightblue; padding: 5px; margin-top: 5px; }
         .circuito { background-color: lightcoral; padding: 5px; margin-top: 5px; }
         .circuito-header { background-color: darkorange; padding: 5px; font-weight: bold; margin-top: 5px; text-align: center; }
+        .btn { padding: 10px; border: none; cursor: pointer; margin: 5px; border-radius: 5px; }
+        .btn-primary { background-color: #007BFF; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
+        <a href="/clienti" class="btn btn-primary">Vai alla gestione clienti</a>
         <form action="/" method="POST">
             <label for="nome_cliente">Nome Cliente:</label>
             <input type="text" name="nome_cliente" required><br>
+            <label for="email">Email Cliente:</label>
+            <input type="email" name="email" required><br>
             <label for="scadenza">Scadenza Scheda:</label>
             <input type="date" name="scadenza" required><br>
             <label for="category">Categoria:</label>
@@ -27,9 +33,9 @@
             
             <div id="allenamenti"></div>
             
-            <button type="button" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button>
+            <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button>
             <br><br>
-            <button type="submit">Genera Scheda</button>
+            <button type="submit" class="btn btn-primary">Genera Scheda</button>
         </form>
     </div>
 
@@ -44,10 +50,10 @@
             divAllenamento.innerHTML = `
                 <h3>Allenamento ${allenamentoIndex + 1}</h3>
                 <div id="esercizi_${allenamentoIndex}"></div>
-                <button type="button" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
-                <button type="button" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
-                <button type="button" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
-                <button type="button" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
+                <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
+                <button type="button" class="btn btn-primary" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
+                <button type="button" class="btn btn-warning" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
+                <button type="button" class="btn btn-danger" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
             `;
             allenamentiContainer.appendChild(divAllenamento);
             allenamentoIndex++;
@@ -90,23 +96,6 @@
             let divSpazio = document.createElement('div');
             divSpazio.style.marginBottom = '15px';
             document.getElementById(`esercizi_${index}`).appendChild(divSpazio);
-        }
-        
-        function aggiungiEsercizio(index, tipo = "Normale") {
-            let eserciziContainer = document.getElementById(`esercizi_${index}`);
-            let div = document.createElement('div');
-            div.classList.add("input-group");
-            if (inCircuito) tipo = "Circuito";
-            if (tipo === "Superserie") div.classList.add("superserie");
-            if (tipo === "Circuito") div.classList.add("circuito");
-
-            div.innerHTML = `
-                <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
-                <input type="number" name="serie_${index}[]" placeholder="Serie" required>
-                <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
-                <input type="hidden" name="tipo_${index}[]" value="${tipo}">
-            `;
-            eserciziContainer.appendChild(div);
         }
     </script>
 </body>
