@@ -1,4 +1,3 @@
-from app import db
 from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
