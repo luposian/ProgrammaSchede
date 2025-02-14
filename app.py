@@ -1,9 +1,12 @@
+from app import db
 from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from fpdf import FPDF
-import os
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
+
+
 
 app = Flask(__name__)
 
@@ -11,16 +14,28 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://clienti_db_user:vLLLRAV1IVQmKWtj29KV1ckdMJoIZSr8@dpg-cunbbi8gph6c73eq88lg-a/clienti_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy()
-db.init_app(app)
+db = SQLAlchemy(app)
 
-
+# Modello della tabella Cliente
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
     scadenza = db.Column(db.Date, nullable=False)
-    scheda_pdf = db.Column(db.String(255))  # Percorso al file PDF
+    scheda_pdf = db.Column(db.String(200), nullable=True)
+
+    # Creazione delle tabelle se non esistono
+with app.app_context():
+    db.create_all()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/clienti')
+def clienti():
+    clienti_lista = Cliente.query.order_by(Cliente.scadenza).all()
+    return render_template('clienti.html', clienti=clienti_lista)
 
     def __repr__(self):
         return f"Cliente('{self.nome}', '{self.email}', '{self.scadenza}')"
@@ -97,8 +112,5 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     return output_path
     
 if __name__ == '__main__':
-    from finale import db
-    with app.app_context():
-        db.create_all()  # Crea le tabelle se non esistono già
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port, debug=True) 
