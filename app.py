@@ -1,34 +1,47 @@
 from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from fpdf import FPDF
-from datetime import datetime
 import os
-
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 
-# Configura il database con PostgreSQL su Render
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://clienti_db_user:vLLLRAV1IVQmKWtj29KV1ckdMJoIZSr8@dpg-cunbbi8gph6c73eq88lg-a/clienti_db'
+# Configurazione del database PostgreSQL su Render
+app.config['SQLALCHEMY_DATABASE_URI'] = "DATABASE_URL"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
-# Modello della tabella Cliente
+
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), nullable=False, unique=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     scadenza = db.Column(db.Date, nullable=False)
-    scheda_pdf = db.Column(db.String(200), nullable=True)
+    scheda_pdf = db.Column(db.String(255))  # Percorso al file PDF
 
-# Creazione della tabella se non esiste
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-     
     def __repr__(self):
         return f"Cliente('{self.nome}', '{self.email}', '{self.scadenza}')"
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        nome_cliente = request.form.get('nome_cliente', 'Sconosciuto')
+        scadenza = request.form.get('scadenza', 'Senza Scadenza')
+        category = request.form.get('category', 'Generale')
+        email_destinatario = request.form.get('email')
+        
+        allenamenti = []
+        for i in range(3):
+            esercizi = request.form.getlist(f'esercizio_{i}[]')
+            serie = request.form.getlist(f'serie_{i}[]')
+            ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
+            tipo = request.form.getlist(f'tipo_{i}[]')
+            if esercizi and serie and ripetizioni and tipo:
+                allenamenti.append(list(zip(esercizi, serie, ripetizioni, tipo)))
+        
+        pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
 
         # Salva il cliente nel database
         nuovo_cliente = Cliente(
@@ -42,6 +55,7 @@ if __name__ == '__main__':
         
         return send_file(pdf_path, as_attachment=True)
     
+    return render_template("index.html")
 
 @app.route('/clienti')
 def clienti():
@@ -58,117 +72,32 @@ def elimina_cliente(cliente_id):
 
 class CustomPDF(FPDF):
     def header(self):
-        pass  # Nessuna intestazione predefinita
+        pass
 
 def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="Generale", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
     
     pdf.add_page()
-    
-    # Posizione del logo e info cliente
-    x_offset_cover = 90  # Posiziona il logo più centrato
-    pdf.set_xy(x_offset_cover, 20)
+    pdf.set_xy(95, 20)
     logo_path = "LogoNewChiaiaFitness.png"
-    pdf.image(logo_path, x=x_offset_cover, y=20, w=110)
+    pdf.image(logo_path, x=95, y=20, w=110)
     pdf.ln(70)
 
     pdf.set_font("Arial", "B", 14)
-    pdf.set_xy(20, pdf.get_y())
-    pdf.cell(140, 10, f"Nome: {nome_cliente}", ln=True, align='L')
-    pdf.set_xy(20, pdf.get_y() + 5)
-    pdf.cell(140, 10, f"Fino al: {scadenza}", ln=True, align='L')
-    pdf.set_xy(20, pdf.get_y() + 5)
-    pdf.set_text_color(0, 0, 255)
-    pdf.cell(140, 10, "Blu = Superserie", ln=True, align='L')
-    pdf.set_xy(20, pdf.get_y() + 5)
-    pdf.set_text_color(255, 102, 102)
-    pdf.cell(140, 10, "Rosso = Circuiti", ln=True, align='L')
-    pdf.set_text_color(0, 0, 0)
-    pdf.ln(10)
-
-    x_offset_left = 10
-    x_offset_right = 155
-    y_start = pdf.get_y()
-    tables_on_page = 0  # Contatore delle tabelle sulla pagina
-
-    for idx, esercizi in enumerate(data_list):
-        if tables_on_page == 2:  # Se ci sono già due tabelle, crea una nuova pagina
-            pdf.add_page()
-            tables_on_page = 0
-            y_start = pdf.get_y()
-
-        x_offset = x_offset_left if tables_on_page == 0 else x_offset_right
-        pdf.set_xy(x_offset, y_start)
-        
-        # Intestazione tabella
-        pdf.set_fill_color(0, 102, 204)
-        pdf.set_text_color(255, 255, 255)
-        pdf.set_font("Arial", "B", 10)
-        pdf.cell(65, 10, "Esercizio", border=1, align='C', fill=True)
-        pdf.cell(30, 10, "Serie", border=1, align='C', fill=True)
-        pdf.cell(40, 10, "Ripetizioni", border=1, align='C', fill=True)
-        pdf.ln()
-        
-        # Reset del colore per il testo
-        pdf.set_text_color(0, 0, 0)
-        pdf.set_font("Arial", size=10)
-        last_type = None
-        series_value = None
-
-        for row in esercizi:
-            pdf.set_xy(x_offset, pdf.get_y())
-
-            # Imposta il colore della riga
-            fill_color = (173, 216, 230) if row[3] == "Superserie" else (255, 153, 102) if row[3] == "Circuito" else (255, 255, 255)
-            pdf.set_fill_color(*fill_color)
-
-            # Gestione delle superserie e circuiti
-            if row[3] in ["Superserie", "Circuito"]:
-                if last_type != row[3]:
-                    series_value = row[1]
-                series_display = str(series_value) if last_type == row[3] else str(row[1])
-            else:
-                series_display = str(row[1])
-                series_value = None
-
-            pdf.cell(65, 10, row[0], border=1, fill=True)
-            pdf.cell(30, 10, series_display, border=1, align='C', fill=True)
-            pdf.cell(40, 10, str(row[2]), border=1, align='C', fill=True)
-            pdf.ln()
-            last_type = row[3]
-
-        tables_on_page += 1  # Incrementa il numero di tabelle sulla pagina
-
-    output_folder = os.path.expanduser("~/Downloads")
-    os.makedirs(output_folder, exist_ok=True)
-    output_path = os.path.join(output_folder, filename)
+    pdf.set_xy(95, pdf.get_y())
+    pdf.cell(140, 10, f"Nome: {nome_cliente}", ln=True, align='C')
+    pdf.set_xy(95, pdf.get_y() + 5)
+    pdf.cell(140, 10, f"Fino al: {scadenza}", ln=True, align='C')
+    pdf.ln(20)
+    
+    output_path = f"/tmp/{filename}"
     pdf.output(output_path)
-
     return output_path
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        nome_cliente = request.form.get('nome_cliente', 'Sconosciuto')
-        scadenza = request.form.get('scadenza', 'Senza Scadenza')
-        category = request.form.get('category', 'Generale')
-        
-        allenamenti = []
-        for i in range(3):  # Assumiamo al massimo 3 allenamenti
-            esercizi = request.form.getlist(f'esercizio_{i}[]')
-            serie = request.form.getlist(f'serie_{i}[]')
-            ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
-            tipo = request.form.getlist(f'tipo_{i}[]')
-            if esercizi and serie and ripetizioni and tipo:
-                allenamenti.append(list(zip(esercizi, serie, ripetizioni, tipo)))
-        
-        pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
-        return send_file(pdf_path, as_attachment=True)
-
-    return render_template("index.html")
-
     
 if __name__ == '__main__':
+    from finale import db
+    with app.app_context():
+        db.create_all()  # Crea le tabelle se non esistono già
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port, debug=True) 
