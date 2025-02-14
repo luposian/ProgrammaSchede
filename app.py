@@ -61,9 +61,10 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
     
+    # Creazione della copertina
     pdf.add_page()
     
-    x_offset_cover = 90  # Posiziona il logo più centrato
+    x_offset_cover = 90
     pdf.set_xy(x_offset_cover, 20)
     logo_path = "LogoNewChiaiaFitness.png"
     pdf.image(logo_path, x=x_offset_cover, y=20, w=110)
@@ -83,20 +84,28 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     pdf.set_text_color(0, 0, 0)
     pdf.ln(10)
 
+    # Offset per le tabelle dalla seconda pagina in poi
     x_offset_left = 10
     x_offset_right = 155
-    y_start = pdf.get_y()
     tables_on_page = 0
+    first_table = True  # Indica se è la prima tabella della seconda pagina
 
     for idx, esercizi in enumerate(data_list):
+        if first_table:
+            # Dopo la copertina, iniziamo una nuova pagina per le tabelle
+            pdf.add_page()
+            tables_on_page = 0
+            first_table = False
+
         if tables_on_page == 2:
             pdf.add_page()
             tables_on_page = 0
-            y_start = pdf.get_y()
 
+        # Posizionamento: una tabella a sinistra e una a destra
         x_offset = x_offset_left if tables_on_page == 0 else x_offset_right
-        pdf.set_xy(x_offset, y_start)
-        
+        pdf.set_xy(x_offset, pdf.get_y())
+
+        # Intestazione tabella
         pdf.set_fill_color(0, 102, 204)
         pdf.set_text_color(255, 255, 255)
         pdf.set_font("Arial", "B", 10)
@@ -104,7 +113,7 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
         pdf.cell(30, 10, "Serie", border=1, align='C', fill=True)
         pdf.cell(40, 10, "Ripetizioni", border=1, align='C', fill=True)
         pdf.ln()
-        
+
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("Arial", size=10)
         last_type = None
@@ -113,6 +122,7 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
         for row in esercizi:
             pdf.set_xy(x_offset, pdf.get_y())
 
+            # Evidenziazione superserie e circuiti
             fill_color = (173, 216, 230) if row[3] == "Superserie" else (255, 153, 102) if row[3] == "Circuito" else (255, 255, 255)
             pdf.set_fill_color(*fill_color)
 
@@ -138,6 +148,7 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     pdf.output(output_path)
 
     return output_path
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
