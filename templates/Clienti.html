@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Clienti</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .delete-button {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .delete-button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gestione Clienti</h1>
+    <table>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Scadenza</th>
+            <th>Scarica Scheda</th>
+            <th>Azioni</th>
+        </tr>
+        {% for cliente in clienti %}
+        <tr>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>{{ cliente.scadenza }}</td>
+            <td><a href="{{ cliente.scheda_pdf }}" download>Scarica</a></td>
+            <td><a href="/elimina_cliente/{{ cliente.id }}" class="delete-button">Elimina</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
