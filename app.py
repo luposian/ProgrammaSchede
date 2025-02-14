@@ -52,7 +52,7 @@ def index():
         
         pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
 
-                return send_file(pdf_path, as_attachment=True)
+        return send_file(pdf_path, as_attachment=True)
     
     return render_template("index.html")
 
