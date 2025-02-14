@@ -1,10 +1,9 @@
-from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for
+from flask import Flask, render_template, request, send_file, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
 import os
-
 
 app = Flask(__name__)
 
@@ -22,26 +21,12 @@ class Cliente(db.Model):
     scadenza = db.Column(db.Date, nullable=False)
     scheda_pdf = db.Column(db.String(200), nullable=True)
 
-# Creazione della tabella se non esiste
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-     
     def __repr__(self):
         return f"Cliente('{self.nome}', '{self.email}', '{self.scadenza}')"
 
-        # Salva il cliente nel database
-        nuovo_cliente = Cliente(
-            nome=nome_cliente,
-            email=email_destinatario,
-            scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
-            scheda_pdf=pdf_path
-        )
-        db.session.add(nuovo_cliente)
-        db.session.commit()
-        
-        return send_file(pdf_path, as_attachment=True)
-    
+# Creazione della tabella se non esiste
+with app.app_context():
+    db.create_all()
 
 @app.route('/clienti')
 def clienti():
@@ -58,7 +43,7 @@ def elimina_cliente(cliente_id):
 
 class CustomPDF(FPDF):
     def header(self):
-        pass  # Nessuna intestazione predefinita
+        pass
 
 def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="Generale", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
     pdf = CustomPDF("L", "mm", "A4")
@@ -66,7 +51,6 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     
     pdf.add_page()
     
-    # Posizione del logo e info cliente
     x_offset_cover = 90  # Posiziona il logo più centrato
     pdf.set_xy(x_offset_cover, 20)
     logo_path = "LogoNewChiaiaFitness.png"
@@ -90,10 +74,10 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     x_offset_left = 10
     x_offset_right = 155
     y_start = pdf.get_y()
-    tables_on_page = 0  # Contatore delle tabelle sulla pagina
+    tables_on_page = 0
 
     for idx, esercizi in enumerate(data_list):
-        if tables_on_page == 2:  # Se ci sono già due tabelle, crea una nuova pagina
+        if tables_on_page == 2:
             pdf.add_page()
             tables_on_page = 0
             y_start = pdf.get_y()
@@ -101,7 +85,6 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
         x_offset = x_offset_left if tables_on_page == 0 else x_offset_right
         pdf.set_xy(x_offset, y_start)
         
-        # Intestazione tabella
         pdf.set_fill_color(0, 102, 204)
         pdf.set_text_color(255, 255, 255)
         pdf.set_font("Arial", "B", 10)
@@ -110,7 +93,6 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
         pdf.cell(40, 10, "Ripetizioni", border=1, align='C', fill=True)
         pdf.ln()
         
-        # Reset del colore per il testo
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("Arial", size=10)
         last_type = None
@@ -119,11 +101,9 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
         for row in esercizi:
             pdf.set_xy(x_offset, pdf.get_y())
 
-            # Imposta il colore della riga
             fill_color = (173, 216, 230) if row[3] == "Superserie" else (255, 153, 102) if row[3] == "Circuito" else (255, 255, 255)
             pdf.set_fill_color(*fill_color)
 
-            # Gestione delle superserie e circuiti
             if row[3] in ["Superserie", "Circuito"]:
                 if last_type != row[3]:
                     series_value = row[1]
@@ -138,7 +118,7 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
             pdf.ln()
             last_type = row[3]
 
-        tables_on_page += 1  # Incrementa il numero di tabelle sulla pagina
+        tables_on_page += 1
 
     output_folder = os.path.expanduser("~/Downloads")
     os.makedirs(output_folder, exist_ok=True)
@@ -151,11 +131,12 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
 def index():
     if request.method == 'POST':
         nome_cliente = request.form.get('nome_cliente', 'Sconosciuto')
+        email_destinatario = request.form.get('email', 'email@esempio.com')
         scadenza = request.form.get('scadenza', 'Senza Scadenza')
         category = request.form.get('category', 'Generale')
         
         allenamenti = []
-        for i in range(3):  # Assumiamo al massimo 3 allenamenti
+        for i in range(3):
             esercizi = request.form.getlist(f'esercizio_{i}[]')
             serie = request.form.getlist(f'serie_{i}[]')
             ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
@@ -164,11 +145,21 @@ def index():
                 allenamenti.append(list(zip(esercizi, serie, ripetizioni, tipo)))
         
         pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
+
+        # **Salva il cliente nel database**
+        nuovo_cliente = Cliente(
+            nome=nome_cliente,
+            email=email_destinatario,
+            scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
+            scheda_pdf=pdf_path
+        )
+        db.session.add(nuovo_cliente)
+        db.session.commit()
+        
         return send_file(pdf_path, as_attachment=True)
 
     return render_template("index.html")
 
-    
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, debug=True) 
+    app.run(host='0.0.0.0', port=port, debug=True)
