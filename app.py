@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
+from app import db
 import os
 
 
@@ -24,18 +25,10 @@ class Cliente(db.Model):
     scheda_pdf = db.Column(db.String(200), nullable=True)
 
     # Creazione delle tabelle se non esistono
-with app.app_context():
+ with app.app_context():
     db.create_all()
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/clienti')
-def clienti():
-    clienti_lista = Cliente.query.order_by(Cliente.scadenza).all()
-    return render_template('clienti.html', clienti=clienti_lista)
-
+     
     def __repr__(self):
         return f"Cliente('{self.nome}', '{self.email}', '{self.scadenza}')"
 
