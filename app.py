@@ -7,11 +7,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Configurazione del database PostgreSQL su Render
-app.config['SQLALCHEMY_DATABASE_URI'] = "DATABASE_URL"
+# Configura il database con PostgreSQL su Render
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://clienti_db_user:vLLLRAV1IVQmKWtj29KV1ckdMJoIZSr8@dpg-cunbbi8gph6c73eq88lg-a/clienti_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy()
+db.init_app(app)
 
 
 class Cliente(db.Model):
