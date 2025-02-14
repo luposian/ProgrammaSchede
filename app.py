@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
-from app import db
 import os
 
 
