@@ -154,34 +154,47 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
 def index():
     if request.method == 'POST':
         nome_cliente = request.form.get('nome_cliente', 'Sconosciuto')
-        email_destinatario = request.form.get('email', 'email@esempio.com')
+        email_destinatario = request.form.get('email', '')
         scadenza = request.form.get('scadenza', 'Senza Scadenza')
         category = request.form.get('category', 'Generale')
-        
+
+        # Genera la scheda PDF
         allenamenti = []
-        for i in range(3):
+        for i in range(3):  
             esercizi = request.form.getlist(f'esercizio_{i}[]')
             serie = request.form.getlist(f'serie_{i}[]')
             ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
             tipo = request.form.getlist(f'tipo_{i}[]')
             if esercizi and serie and ripetizioni and tipo:
                 allenamenti.append(list(zip(esercizi, serie, ripetizioni, tipo)))
-        
+
         pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
 
-        # **Salva il cliente nel database**
-        nuovo_cliente = Cliente(
-            nome=nome_cliente,
-            email=email_destinatario,
-            scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
-            scheda_pdf=pdf_path
-        )
-        db.session.add(nuovo_cliente)
+        # Controlla se il cliente esiste già
+        cliente_esistente = Cliente.query.filter_by(email=email_destinatario).first()
+
+        if cliente_esistente:
+            # Aggiorna i dati del cliente esistente
+            cliente_esistente.nome = nome_cliente
+            cliente_esistente.scadenza = datetime.strptime(scadenza, "%Y-%m-%d")
+            cliente_esistente.scheda_pdf = pdf_path
+        else:
+            # Crea un nuovo cliente se non esiste
+            nuovo_cliente = Cliente(
+                nome=nome_cliente,
+                email=email_destinatario,
+                scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
+                scheda_pdf=pdf_path
+            )
+            db.session.add(nuovo_cliente)
+
+        # Salva le modifiche nel database
         db.session.commit()
-        
+
         return send_file(pdf_path, as_attachment=True)
 
     return render_template("index.html")
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
