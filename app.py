@@ -94,6 +94,13 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     output_path = f"/tmp/{filename}"
     pdf.output(output_path)
     return output_path
+    
+if __name__ == '__main__':
+    from finale import db
+    with app.app_context():
+        db.create_all()  # Crea tutte le tabelle nel database se non esistono già
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port, debug=True)
 
 if __name__ == '__main__':
     import os
