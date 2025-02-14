@@ -11,15 +11,15 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://clienti_db_user:vLLLRAV1IVQmKWtj29KV1ckdMJoIZSr8@dpg-cunbbi8gph6c73eq88lg-a.frankfurt-postgres.render.com/clienti_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
-# Modello per la gestione clienti
+
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     scadenza = db.Column(db.Date, nullable=False)
-    scheda_pdf = db.Column(db.String(200), nullable=False)
+    scheda_pdf = db.Column(db.String(255))  # Percorso al file PDF
 
     def __repr__(self):
         return f"Cliente('{self.nome}', '{self.email}', '{self.scadenza}')"
@@ -98,11 +98,6 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
 if __name__ == '__main__':
     from finale import db
     with app.app_context():
-        db.create_all()  # Crea tutte le tabelle nel database se non esistono già
+        db.create_all()  # Crea le tabelle se non esistono già
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, debug=True)
-
-if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=True) 
