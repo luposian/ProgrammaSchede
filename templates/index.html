@@ -102,11 +102,12 @@ form {
             <label for="scadenza">Scadenza Scheda:</label>
             <input type="date" name="scadenza" value="{{ cliente.scadenza if cliente else '' }}" required><br>
             
+            
             <div id="allenamenti">
-                {% if cliente and cliente.scheda_dati %}
-                    {% for allenamento in cliente.scheda_dati %}
                 <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> <br><br>
                 <button type="submit" class="btn btn-primary">Genera Scheda</button>
+                {% if cliente and cliente.scheda_dati %}
+                    {% for allenamento in cliente.scheda_dati %}
                         <div class="allenamento">
                             <h3>Allenamento {{ loop.index }}</h3>
                             <div id="esercizi_{{ loop.index }}">
