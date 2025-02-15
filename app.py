@@ -182,7 +182,7 @@ def index():
                 nome=nome_cliente,
                 email=email_destinatario,
                 scadenza=datetime.strptime(scadenza, "%d-%m-%Y"),
-                scheda_pdf = pdf_path
+                scheda_pdf = pdf_path,
                 scheda_dati = allenamenti  # Salva il formato JSON
             )
             db.session.add(cliente)
