@@ -169,16 +169,15 @@ function aggiungiEsercizio(index, tipo = "Normale") {
         <input type="number" name="serie_${index}[]" placeholder="Serie" required>
         <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
         <input type="hidden" name="tipo_${index}[]" value="${tipo}">
-        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio('${esercizioId}')">Elimina</button>
+        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
     `;
 
     eserciziContainer.appendChild(div);
 }
 
-function rimuoviEsercizio(id) {
-    let esercizio = document.getElementById(id);
-    if (esercizio) {
-        esercizio.remove();
+ function rimuoviEsercizio(button) {
+    let esercizioDiv = button.parentNode;
+    esercizioDiv.parentNode.removeChild(esercizioDiv);
     }
 }
 
