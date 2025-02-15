@@ -55,6 +55,12 @@ def elimina_cliente(cliente_id):
         db.session.commit()
     return redirect(url_for('clienti'))
 
+@app.route('/modifica_scheda/<int:cliente_id>')
+def modifica_scheda(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+    return render_template("index.html", cliente=cliente)
+    
+
 class CustomPDF(FPDF):
     def header(self):
         pass
