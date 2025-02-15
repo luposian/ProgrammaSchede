@@ -60,7 +60,7 @@ class CustomPDF(FPDF):
 def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="Generale", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
-    
+
     # Creazione copertina
     pdf.add_page()
     x_offset_cover = 90  
@@ -83,9 +83,9 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
     pdf.set_text_color(0, 0, 0)
     pdf.ln(10)
 
-    # A partire dalla seconda pagina, ogni tabella sarà su una nuova pagina
+    # Stampa delle tabelle, una per pagina dalla seconda in poi
     for idx, esercizi in enumerate(data_list):
-        pdf.add_page()  # Nuova pagina per ogni tabella
+        pdf.add_page()  # Ogni tabella su una nuova pagina
 
         pdf.set_font("Arial", "B", 12)
         pdf.cell(200, 10, f"Allenamento {idx + 1}", ln=True, align="C")
@@ -106,22 +106,29 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="General
         series_value = None
 
         for row in esercizi:
-            fill_color = (173, 216, 230) if row[3] == "Superserie" else (255, 153, 102) if row[3] == "Circuito" else (255, 255, 255)
-            pdf.set_fill_color(*fill_color)
+            esercizio, serie, ripetizioni, tipo = row
 
-            if row[3] in ["Superserie", "Circuito"]:
-                if last_type != row[3]:
-                    series_value = row[1]
-                series_display = str(series_value) if last_type == row[3] else str(row[1])
+            # Assegna il colore corretto
+            if tipo == "Superserie":
+                pdf.set_fill_color(173, 216, 230)  # Blu
+            elif tipo == "Circuito":
+                pdf.set_fill_color(255, 102, 102)  # Rosso
             else:
-                series_display = str(row[1])
+                pdf.set_fill_color(255, 255, 255)  # Normale
+
+            if tipo in ["Superserie", "Circuito"]:
+                if last_type != tipo:
+                    series_value = serie
+                series_display = str(series_value) if last_type == tipo else str(serie)
+            else:
+                series_display = str(serie)
                 series_value = None
 
-            pdf.cell(65, 10, row[0], border=1, fill=True)
+            pdf.cell(65, 10, esercizio, border=1, fill=True)
             pdf.cell(30, 10, series_display, border=1, align='C', fill=True)
-            pdf.cell(40, 10, str(row[2]), border=1, align='C', fill=True)
+            pdf.cell(40, 10, str(ripetizioni), border=1, align='C', fill=True)
             pdf.ln()
-            last_type = row[3]
+            last_type = tipo
 
     output_folder = os.path.expanduser("~/Downloads")
     os.makedirs(output_folder, exist_ok=True)
