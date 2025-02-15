@@ -44,8 +44,11 @@ with app.app_context():
 
 @app.route('/clienti')
 def clienti():
+ try:
     clienti_lista = Cliente.query.order_by(Cliente.scadenza).all()
     return render_template("clienti.html", clienti=clienti_lista)
+ except Exception as e:
+        return f"Errore durante il caricamento dei clienti: {e}"
 
 @app.route('/elimina_cliente/<int:cliente_id>')
 def elimina_cliente(cliente_id):
