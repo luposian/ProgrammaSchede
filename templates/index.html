@@ -104,11 +104,11 @@ form {
             
             
             <div id="allenamenti">
-                <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> <br><br>
-                <button type="submit" class="btn btn-primary">Genera Scheda</button>
                 {% if cliente and cliente.scheda_dati %}
                     {% for allenamento in cliente.scheda_dati %}
                         <div class="allenamento">
+                            <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> <br><br>
+                            <button type="submit" class="btn btn-primary">Genera Scheda</button>
                             <h3>Allenamento {{ loop.index }}</h3>
                             <div id="esercizi_{{ loop.index }}">
                                 {% for esercizio in allenamento %}
@@ -128,11 +128,11 @@ form {
 
 
     <script>
-        let allenamentiContainer = document.getElementById('allenamenti');
+let allenamentiContainer = document.getElementById('allenamenti');
 let allenamentoIndex = 0;
 let inCircuito = false; // Variabile per identificare se siamo in un circuito
 
-    function aggiungiAllenamento() {
+function aggiungiAllenamento() {
         let allenamentiContainer = document.getElementById('allenamenti');
         let divAllenamento = document.createElement('div');
         divAllenamento.classList.add("allenamento");
