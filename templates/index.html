@@ -39,63 +39,73 @@
 
     <script>
         let allenamentiContainer = document.getElementById('allenamenti');
-        let allenamentoIndex = 0;
-        let inCircuito = false;
+let allenamentoIndex = 0;
+let inCircuito = false; // Variabile per identificare se siamo in un circuito
 
-        function aggiungiAllenamento() {
-            let divAllenamento = document.createElement('div');
-            divAllenamento.classList.add("allenamento");
-            divAllenamento.innerHTML = `
-                <h3>Allenamento ${allenamentoIndex + 1}</h3>
-                <div id="esercizi_${allenamentoIndex}"></div>
-                <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
-                <button type="button" class="btn btn-primary" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
-                <button type="button" class="btn btn-warning" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
-                <button type="button" class="btn btn-danger" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
-            `;
-            allenamentiContainer.appendChild(divAllenamento);
-            allenamentoIndex++;
-        }
-        
-        function aggiungiEsercizio(index, tipo = "Normale") {
-            let eserciziContainer = document.getElementById(`esercizi_${index}`);
-            let div = document.createElement('div');
-            div.classList.add("input-group");
-            if (tipo === "Superserie") div.classList.add("superserie");
-            if (tipo === "Circuito") div.classList.add("circuito");
+function aggiungiAllenamento() {
+    let divAllenamento = document.createElement('div');
+    divAllenamento.classList.add("allenamento");
+    divAllenamento.innerHTML = `
+        <h3>Allenamento ${allenamentoIndex + 1}</h3>
+        <div id="esercizi_${allenamentoIndex}"></div>
+        <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
+        <button type="button" class="btn btn-primary" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
+        <button type="button" class="btn btn-warning" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
+        <button type="button" class="btn btn-danger" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
+    `;
+    allenamentiContainer.appendChild(divAllenamento);
+    allenamentoIndex++;
+}
 
-            div.innerHTML = `
-                <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
-                <input type="number" name="serie_${index}[]" placeholder="Serie" required>
-                <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
-                <input type="hidden" name="tipo_${index}[]" value="${tipo}">
-                <p>Tipo selezionato: ${tipo}</p>
-            `;
-            eserciziContainer.appendChild(div);
-        }
+function aggiungiEsercizio(index, tipo = "Normale") {
+    let eserciziContainer = document.getElementById(`esercizi_${index}`);
+    let div = document.createElement('div');
+    div.classList.add("input-group");
 
-        function aggiungiSuperserie(index) {
-            aggiungiEsercizio(index, "Superserie");
-            aggiungiEsercizio(index, "Superserie");
-        }
+    // 🔴 Se siamo in un circuito, imposta il tipo correttamente
+    if (inCircuito) {
+        tipo = "Circuito";
+    }
+
+    if (tipo === "Superserie") div.classList.add("superserie");
+    if (tipo === "Circuito") div.classList.add("circuito");
+
+    div.innerHTML = `
+        <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
+        <input type="number" name="serie_${index}[]" placeholder="Serie" required>
+        <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
+        <input type="hidden" name="tipo_${index}[]" value="${tipo}">
+    `;
+
+    eserciziContainer.appendChild(div);
+}
+
+function aggiungiSuperserie(index) {
+    aggiungiEsercizio(index, "Superserie");
+    aggiungiEsercizio(index, "Superserie");
+}
+
+function iniziaCircuito(index) {
+    inCircuito = true;
+    let eserciziContainer = document.getElementById(`esercizi_${index}`);
+    
+    let divHeader = document.createElement('div');
+    divHeader.classList.add("circuito-header");
+    divHeader.innerHTML = "Circuito";
+    eserciziContainer.appendChild(divHeader);
+    
+    document.getElementById(`terminaCircuito_${index}`).style.display = 'inline';
+}
+
+function terminaCircuito(index) {
+    inCircuito = false; // 🔴 Imposta che il circuito è terminato
+    document.getElementById(`terminaCircuito_${index}`).style.display = 'none';
+    
+    let divSpazio = document.createElement('div');
+    divSpazio.style.marginBottom = '25px';
+    document.getElementById(`esercizi_${index}`).appendChild(divSpazio);
+}
         
-        function iniziaCircuito(index) {
-            inCircuito = true;
-            let eserciziContainer = document.getElementById(`esercizi_${index}`);
-            let divHeader = document.createElement('div');
-            divHeader.classList.add("circuito-header");
-            divHeader.innerHTML = "Circuito";
-            eserciziContainer.appendChild(divHeader);
-            document.getElementById(`terminaCircuito_${index}`).style.display = 'inline';
-        }
-        
-        function terminaCircuito(index) {
-            inCircuito = false;
-            document.getElementById(`terminaCircuito_${index}`).style.display = 'none';
-            let divSpazio = document.createElement('div');
-            divSpazio.style.marginBottom = '25px';
-            document.getElementById(`esercizi_${index}`).appendChild(divSpazio);
-        }
     </script>
 </body>
 </html>
