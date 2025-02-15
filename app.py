@@ -57,7 +57,7 @@ class CustomPDF(FPDF):
     def header(self):
         pass
 
-def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", category="Generale", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
+def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
 
@@ -144,7 +144,7 @@ def index():
         nome_cliente = request.form.get('nome_cliente', 'Sconosciuto')
         email_destinatario = request.form.get('email', '')
         scadenza = request.form.get('scadenza', 'Senza Scadenza')
-        category = request.form.get('category', 'Generale')
+        
 
         # Genera la scheda PDF
         allenamenti = []
@@ -156,7 +156,7 @@ def index():
             if esercizi and serie and ripetizioni and tipo:
                 allenamenti.append(list(zip(esercizi, serie, ripetizioni, tipo)))
 
-        pdf_path = generate_pdf(allenamenti, category=category, nome_cliente=nome_cliente, scadenza=scadenza)
+        pdf_path = generate_pdf(allenamenti, nome_cliente=nome_cliente, scadenza=scadenza)
 
         # Controlla se il cliente esiste già
         cliente_esistente = Cliente.query.filter_by(email=email_destinatario).first()
@@ -164,7 +164,7 @@ def index():
         if cliente_esistente:
             # Aggiorna i dati del cliente esistente
             cliente_esistente.nome = nome_cliente
-            cliente_esistente.scadenza = datetime.strptime(scadenza, "%Y-%m-%d")
+            cliente_esistente.scadenza = datetime.strptime(scadenza, "%d-%m-%Y")
             cliente_esistente.scheda_pdf = pdf_path
         else:
             # Crea un nuovo cliente se non esiste
