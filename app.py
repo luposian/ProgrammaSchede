@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
+from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.dialects.postgresql import JSON
 import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
@@ -32,6 +33,7 @@ class Cliente(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     scadenza = db.Column(db.Date, nullable=False)
     scheda_pdf = db.Column(db.String(200), nullable=True)
+    scheda_dati = db.Column(JSON, nullable=True)  # Nuovo campo per salvare i dati in formato JSON
 
     def __repr__(self):
         return f"Cliente('{self.nome}', '{self.email}', '{self.scadenza}')"
@@ -165,16 +167,19 @@ def index():
             # Aggiorna i dati del cliente esistente
             cliente_esistente.nome = nome_cliente
             cliente_esistente.scadenza = datetime.strptime(scadenza, "%d-%m-%Y")
-            cliente_esistente.scheda_pdf = pdf_path
+            # Se esiste, aggiorna la scheda
+            cliente.scheda_pdf = pdf_path
+            cliente.scheda_dati = allenamenti  # Salva il formato JSON
         else:
             # Crea un nuovo cliente se non esiste
             nuovo_cliente = Cliente(
                 nome=nome_cliente,
                 email=email_destinatario,
-                scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
-                scheda_pdf=pdf_path
+                scadenza=datetime.strptime(scadenza, "%d-%m-%Y"),
+                scheda_pdf = pdf_path
+                scheda_dati = allenamenti  # Salva il formato JSON
             )
-            db.session.add(nuovo_cliente)
+            db.session.add(cliente)
 
         # Salva le modifiche nel database
         db.session.commit()
