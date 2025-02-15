@@ -142,14 +142,26 @@ function aggiungiEsercizio(index, tipo = "Normale") {
     if (tipo === "Superserie") div.classList.add("superserie");
     if (tipo === "Circuito") div.classList.add("circuito");
 
+    // Creiamo un ID univoco per ogni esercizio
+    let esercizioId = `esercizio_${index}_${Date.now()}`;
+    div.id = esercizioId;
+
     div.innerHTML = `
         <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
         <input type="number" name="serie_${index}[]" placeholder="Serie" required>
         <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
         <input type="hidden" name="tipo_${index}[]" value="${tipo}">
+        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio('${esercizioId}')">Elimina</button>
     `;
 
     eserciziContainer.appendChild(div);
+}
+
+function rimuoviEsercizio(id) {
+    let esercizio = document.getElementById(id);
+    if (esercizio) {
+        esercizio.remove();
+    }
 }
 
 function aggiungiSuperserie(index) {
