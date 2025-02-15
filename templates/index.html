@@ -105,6 +105,8 @@ form {
             <div id="allenamenti">
                 {% if cliente and cliente.scheda_dati %}
                     {% for allenamento in cliente.scheda_dati %}
+                <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> <br><br>
+                <button type="submit" class="btn btn-primary">Genera Scheda</button>
                         <div class="allenamento">
                             <h3>Allenamento {{ loop.index }}</h3>
                             <div id="esercizi_{{ loop.index }}">
