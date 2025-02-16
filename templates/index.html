@@ -6,251 +6,130 @@
     <title>Creazione Scheda Allenamento</title>
     <style>
         body { 
-    font-family: Arial, sans-serif; 
-    background-color: #a0a0a0;  /* Grigio medio-scuro per meno contrasto */ 
-    text-align: center; 
-}
+            font-family: Arial, sans-serif; 
+            background-color: #a0a0a0;
+            text-align: center; 
+        }
 
-.container { 
-    width: 60%; 
-    margin: auto; 
-    background: #333333; /* Grigio scuro per il form */ 
-    padding: 20px; 
-    border-radius: 10px; 
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 50px; /* Distanza dal logo */
-    color: white; /* Testo bianco per contrasto */
-}
+        .container { 
+            width: 60%; 
+            margin: auto; 
+            background: #333333;
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            color: white; 
+        }
 
-h2 { 
-    margin-bottom: 25px; /* Spazio tra h2 e il bottone */
-}
+        h2 { margin-bottom: 25px; }
 
-/* Stile del logo */
-.logo {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 80px; /* Imposta una dimensione più piccola */
-}
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 80px;
+        }
 
-input[type="text"], input[type="email"], input[type="date"], input[type="number"] {
-    width: 25%; /* Riduce la larghezza */
-    padding: 5px; /* Riduce il padding per renderli più piccoli */
-    margin: 5px 0;
-    border: 1px solid #555;
-    background-color: #222; /* Sfondo input più scuro */
-    color: white;
-    border-radius: 5px;
-    font-size: 14px; /* Dimensione del testo più piccola */
-}
+        input[type="text"], input[type="email"], input[type="date"], input[type="number"] {
+            width: 25%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #555;
+            background-color: #222;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-.btn-primary { 
-    background-color: #007BFF; 
-    color: white; 
-    display: inline-block; 
-    margin-bottom: 15px; /* Spazio tra il bottone e il form */
-    border-radius: 5px;
-    padding: 8px 15px; /* Rende il bottone più compatto */
-}
+        .draggable {
+            cursor: grab;
+        }
 
-form { 
-    margin-top: 25px; /* Spazio sopra il form */
-}
-
-.input-group { 
-    margin-bottom: 10px; 
-}
-
-.superserie { 
-    background-color: lightblue; 
-    padding: 5px; 
-    margin-top: 5px; 
-}
-
-.circuito { 
-    background-color: lightcoral; 
-    padding: 5px; 
-    margin-top: 5px; 
-}
-
-.circuito-header { 
-    background-color: darkorange; 
-    padding: 5px; 
-    font-weight: bold; 
-    margin-top: 5px; 
-    text-align: center; 
-}
-
-.btn { 
-    padding: 10px; 
-    border: none; 
-    cursor: pointer; 
-    margin: 5px; 
-    border-radius: 5px; 
-}
-
-.btn-primary { 
-    background-color: #007BFF; 
-    color: white; 
-}
-
-.btn-danger { 
-    background-color: #dc3545; 
-    color: white; 
-}
-
-.btn-success { 
-    background-color: #28a745; 
-    color: white; 
-}
-
-.btn-warning { 
-    background-color: darkorange; 
-    color: white; 
-}
-
-
+        .dragging {
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
-      <!-- Logo in alto a sinistra -->
     <img src="templates/LogoNewChiaiaFitness.png" alt="Logo" class="logo">
-
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
         <a href="/clienti" class="btn btn-success">Vai alla gestione clienti</a>
         <form action="/" method="POST">
             <label for="nome_cliente">Nome Cliente:</label>
-            <input type="text" name="nome_cliente" value="{{ cliente.nome if cliente else '' }}" required><br>
+            <input type="text" name="nome_cliente" required><br>
             <label for="email">Email Cliente:</label>
-            <input type="email" name="email" value="{{ cliente.email if cliente else '' }}" required><br>
+            <input type="email" name="email" required><br>
             <label for="scadenza">Scadenza Scheda:</label>
-            <input type="date" name="scadenza" value="{{ cliente.scadenza if cliente else '' }}" required><br>
-            
-            
-            <div id="allenamenti">
-                {% if cliente and cliente.scheda_dati %}
-                    {% for allenamento in cliente.scheda_dati %}
-                        <div class="allenamento">
-                            <h3>Allenamento {{ loop.index }}</h3>
-                            <div id="esercizi_{{ loop.index }}">
-                                {% for esercizio in allenamento %}
-                                    <div class="input-group">
-                                        <input type="text" name="esercizio_{{ loop.index }}[]" value="{{ esercizio[0] }}" required>
-                                        <input type="number" name="serie_{{ loop.index }}[]" value="{{ esercizio[1] }}" required>
-                                        <input type="number" name="ripetizioni_{{ loop.index }}[]" value="{{ esercizio[2] }}" required>
-                                        <input type="hidden" name="tipo_{{ loop.index }}[]" value="{{ esercizio[3] }}">
-                                        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-
+            <input type="date" name="scadenza" required><br>
+            <div id="allenamenti"></div>
             <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> 
             <br><br>
-           <button type="submit" class="btn btn-primary">Genera Scheda</button>
-
+            <button type="submit" class="btn btn-primary">Genera Scheda</button>
+        </form>
+    </div>
 
     <script>
+        let allenamentiContainer = document.getElementById('allenamenti');
+        let allenamentoIndex = 0;
 
-
-function aggiungiEsercizio(index, tipo = "Normale") {
-    let eserciziContainer = document.getElementById(`esercizi_${index}`);
-    let div = document.createElement('div');
-    div.classList.add("input-group");
-
-    // 🔴 Se siamo in un circuito, imposta il tipo correttamente
-    if (inCircuito) {
-        tipo = "Circuito";
-    }
-
-    if (tipo === "Superserie") div.classList.add("superserie");
-    if (tipo === "Circuito") div.classList.add("circuito");
-
-    // Creiamo un ID univoco per ogni esercizio
-    let esercizioId = `esercizio_${index}_${Date.now()}`;
-    div.id = esercizioId;
-
-    div.innerHTML = `
-        <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
-        <input type="number" name="serie_${index}[]" placeholder="Serie" required>
-        <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
-        <input type="hidden" name="tipo_${index}[]" value="${tipo}">
-        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
-    `;
-
-    eserciziContainer.appendChild(div);
-}
-
- function rimuoviEsercizio(button) {
-    let esercizioDiv = button.parentNode;
-    esercizioDiv.parentNode.removeChild(esercizioDiv);
-    }
-
-
-function aggiungiSuperserie(index) {
-    aggiungiEsercizio(index, "Superserie");
-    aggiungiEsercizio(index, "Superserie");
-}
-
-function iniziaCircuito(index) {
-    inCircuito = true;
-    let eserciziContainer = document.getElementById(`esercizi_${index}`);
-    
-    let divHeader = document.createElement('div');
-    divHeader.classList.add("circuito-header");
-    divHeader.innerHTML = "Circuito";
-    eserciziContainer.appendChild(divHeader);
-    
-    document.getElementById(`terminaCircuito_${index}`).style.display = 'inline';
-}
-
-function terminaCircuito(index) {
-    inCircuito = false; // 🔴 Imposta che il circuito è terminato
-    document.getElementById(`terminaCircuito_${index}`).style.display = 'none';
-    
-    let divSpazio = document.createElement('div');
-    divSpazio.style.marginBottom = '25px';
-    document.getElementById(`esercizi_${index}`).appendChild(divSpazio);
-}
-
-function rimuoviEsercizio(button) {
-    button.parentElement.remove();
-}
-
-let allenamentiContainer = document.getElementById('allenamenti');
-    let allenamentoIndex = 0;
-    let inCircuito = false; // Variabile per identificare se siamo in un circuito
-
-    function aggiungiAllenamento() {
-        console.log("Funzione aggiungiAllenamento chiamata!"); // Debug
-        if (!allenamentiContainer) {
-            console.error("Errore: div allenamenti non trovato!");
-            return;
+        function aggiungiAllenamento() {
+            let divAllenamento = document.createElement('div');
+            divAllenamento.classList.add("allenamento");
+            divAllenamento.innerHTML = `
+                <h3>Allenamento ${allenamentoIndex + 1}</h3>
+                <div id="esercizi_${allenamentoIndex}" class="sortable"></div>
+                <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
+            `;
+            allenamentiContainer.appendChild(divAllenamento);
+            allenamentoIndex++;
         }
 
-        let divAllenamento = document.createElement('div');
-        divAllenamento.classList.add("allenamento");
-        divAllenamento.innerHTML = `
-            <h3>Allenamento ${allenamentoIndex + 1}</h3>
-            <div id="esercizi_${allenamentoIndex}"></div>
-            <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
-            <button type="button" class="btn btn-primary" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
-            <button type="button" class="btn btn-warning" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
-            <button type="button" class="btn btn-danger" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
-        `;
-        allenamentiContainer.appendChild(divAllenamento);
-        allenamentoIndex++;
-    }
+        function aggiungiEsercizio(index) {
+            let eserciziContainer = document.getElementById(`esercizi_${index}`);
+            let div = document.createElement('div');
+            div.classList.add("input-group", "draggable");
+            div.setAttribute("draggable", "true");
 
-    document.addEventListener("DOMContentLoaded", function() {
-        console.log("JavaScript caricato correttamente!");
-    });
-        
+            div.innerHTML = `
+                <input type="text" name="esercizio_${index}[]" placeholder="Esercizio" required>
+                <input type="number" name="serie_${index}[]" placeholder="Serie" required>
+                <input type="number" name="ripetizioni_${index}[]" placeholder="Ripetizioni" required>
+                <select name="tipo_${index}[]">
+                    <option value="Normale">Normale</option>
+                    <option value="Superserie">Superserie</option>
+                    <option value="Circuito">Circuito</option>
+                </select>
+                <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
+            `;
+            eserciziContainer.appendChild(div);
+            aggiungiDragDrop(div);
+        }
+
+        function rimuoviEsercizio(button) {
+            button.parentElement.remove();
+        }
+
+        function aggiungiDragDrop(element) {
+            element.addEventListener("dragstart", function (e) {
+                e.target.classList.add("dragging");
+            });
+            element.addEventListener("dragend", function (e) {
+                e.target.classList.remove("dragging");
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                const dragging = document.querySelector(".dragging");
+                const closest = document.elementFromPoint(e.clientX, e.clientY);
+                if (closest && closest.classList.contains("draggable")) {
+                    closest.parentNode.insertBefore(dragging, closest.nextSibling);
+                }
+            });
+        });
     </script>
 </body>
 </html>
