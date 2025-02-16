@@ -94,12 +94,37 @@
         <a href="/clienti" class="btn btn-success">Vai alla gestione clienti</a>
         <form action="/" method="POST">
             <label for="nome_cliente">Nome Cliente:</label>
-            <input type="text" name="nome_cliente" required><br>
+            <input type="text" name="nome_cliente" value="{{ cliente.nome if cliente else '' }}" required><br>
             <label for="email">Email Cliente:</label>
-            <input type="email" name="email" required><br>
+            <input type="email" name="email" value="{{ cliente.email if cliente else '' }}" required><br>
             <label for="scadenza">Scadenza Scheda:</label>
-            <input type="date" name="scadenza" required><br>
-            <div id="allenamenti"></div>
+            <input type="date" name="scadenza" value="{{ cliente.scadenza if cliente else '' }}" required><br>
+            
+            <div id="allenamenti">
+                {% if cliente and cliente.scheda_dati %}
+                    {% for allenamento in cliente.scheda_dati %}
+                        <div class="allenamento">
+                            <h3>Allenamento {{ loop.index }}</h3>
+                            <div id="esercizi_{{ loop.index }}">
+                                {% for esercizio in allenamento %}
+                                    <div class="input-group draggable" draggable="true">
+                                        <input type="text" name="esercizio_{{ loop.index }}[]" value="{{ esercizio[0] }}" required>
+                                        <input type="number" name="serie_{{ loop.index }}[]" value="{{ esercizio[1] }}" required>
+                                        <input type="number" name="ripetizioni_{{ loop.index }}[]" value="{{ esercizio[2] }}" required>
+                                        <select name="tipo_{{ loop.index }}[]">
+                                            <option value="Normale" {% if esercizio[3] == "Normale" %}selected{% endif %}>Normale</option>
+                                            <option value="Superserie" {% if esercizio[3] == "Superserie" %}selected{% endif %}>Superserie</option>
+                                            <option value="Circuito" {% if esercizio[3] == "Circuito" %}selected{% endif %}>Circuito</option>
+                                        </select>
+                                        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
             <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> 
             <br><br>
             <button type="submit" class="btn btn-primary">Genera Scheda</button>
@@ -108,8 +133,8 @@
 
     <script>
         let allenamentiContainer = document.getElementById('allenamenti');
-        let allenamentoIndex = 0;
-
+        let allenamentoIndex = {{ cliente.scheda_dati|length if cliente and cliente.scheda_dati else 0 }};
+        
         function aggiungiAllenamento() {
             let divAllenamento = document.createElement('div');
             divAllenamento.classList.add("allenamento");
