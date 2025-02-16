@@ -88,7 +88,7 @@
     </style>
 </head>
 <body>
-    <img src="static/LogoNewChiaiaFitness.png" alt="Logo" class="logo">
+    <img src="{{ url_for('static', filename='LogoNewChiaiaFitness.png') }}" alt="Logo" class="logo">
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
         <a href="/clienti" class="btn btn-success">Vai alla gestione clienti</a>
