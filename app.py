@@ -189,7 +189,8 @@ def index():
             db.session.add(nuovo_cliente)
 
         db.session.commit()
-        return send_file(pdf_path, as_attachment=True)
+        return send_file(output_path, as_attachment=True)
+
 
     return render_template("index.html")
 
