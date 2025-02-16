@@ -46,7 +46,7 @@ with app.app_context():
 def clienti():
     try:
         clienti_lista = Cliente.query.with_entities(
-            Cliente.id, Cliente.nome, Cliente.email, Cliente.scadenza, Cliente.scheda_pdf
+            Cliente.id, Cliente.nome, Cliente.email, Cliente.scadenza, Cliente.scheda_pdf, Cliente.scheda_dati
         ).order_by(Cliente.scadenza).all()
         return render_template("clienti.html", clienti=clienti_lista)
     except Exception as e:
@@ -70,7 +70,7 @@ class CustomPDF(FPDF):
     def header(self):
         pass
 
-def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
+def generate_pdf(data_list, filename="scheda_pdf.pdf", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
 
