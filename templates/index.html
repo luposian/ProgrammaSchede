@@ -7,7 +7,7 @@
     <style>
         body { 
     font-family: Arial, sans-serif; 
-    background-color: #d3d3d3;  /* Grigio chiaro */ 
+    background-color: #a0a0a0;  /* Grigio medio-scuro per meno contrasto */ 
     text-align: center; 
 }
 
@@ -35,20 +35,23 @@ h2 {
 }
 
 input[type="text"], input[type="email"], input[type="date"] {
-    width: 100%;
-    padding: 8px;
-    margin: 8px 0;
+    width: 80%; /* Riduce la larghezza */
+    padding: 5px; /* Riduce il padding per renderli più piccoli */
+    margin: 5px 0;
     border: 1px solid #555;
     background-color: #222; /* Sfondo input più scuro */
     color: white;
     border-radius: 5px;
+    font-size: 14px; /* Dimensione del testo più piccola */
 }
 
 .btn-primary { 
     background-color: #007BFF; 
     color: white; 
     display: inline-block; 
-    margin-bottom: 25px; /* Spazio tra il bottone e il form */
+    margin-bottom: 15px; /* Spazio tra il bottone e il form */
+    border-radius: 5px;
+    padding: 8px 15px; /* Rende il bottone più compatto */
 }
 
 form { 
@@ -112,7 +115,7 @@ form {
 </head>
 <body>
       <!-- Logo in alto a sinistra -->
-    <img src="LogoNewChiaiaFitness.png" alt="Logo" class="logo">
+    <img src="main\templates\LogoNewChiaiaFitness.png" alt="Logo" class="logo">
 
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
