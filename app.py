@@ -1,13 +1,13 @@
-    from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
-    from flask_migrate import Migrate
-    from flask_sqlalchemy import SQLAlchemy
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import scoped_session, sessionmaker
-    from sqlalchemy.dialects.postgresql import JSON
-    import pandas as pd
-    from fpdf import FPDF
-    from datetime import datetime
-    import os
+from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.dialects.postgresql import JSON
+import pandas as pd
+from fpdf import FPDF
+from datetime import datetime
+import os
     
     app = Flask(__name__)
     
