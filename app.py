@@ -149,12 +149,12 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sco
             pdf.cell(40, 10, str(ripetizioni), border=1, align='C', fill=True)
             pdf.ln()
 
-output_folder = "static/pdfs"
-os.makedirs(output_folder, exist_ok=True)  # Crea la cartella se non esiste
-output_path = os.path.join(output_folder, filename)
+  output_folder = "static/pdfs"
+  os.makedirs(output_folder, exist_ok=True)  # Crea la cartella se non esiste
+  output_path = os.path.join(output_folder, filename)
 
-pdf.output(output_path)
-return output_path
+  pdf.output(output_path)
+ return output_path
 
 
 @app.route('/', methods=['GET', 'POST'])
