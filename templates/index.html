@@ -14,11 +14,12 @@
 .container { 
     width: 60%; 
     margin: auto; 
-    background: white; 
+    background: #333333; /* Grigio scuro per il form */ 
     padding: 20px; 
     border-radius: 10px; 
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     margin-top: 50px; /* Distanza dal logo */
+    color: white; /* Testo bianco per contrasto */
 }
 
 h2 { 
@@ -31,6 +32,16 @@ h2 {
     top: 10px;
     left: 10px;
     width: 80px; /* Imposta una dimensione più piccola */
+}
+
+input[type="text"], input[type="email"], input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #555;
+    background-color: #222; /* Sfondo input più scuro */
+    color: white;
+    border-radius: 5px;
 }
 
 .btn-primary { 
@@ -101,7 +112,7 @@ form {
 </head>
 <body>
       <!-- Logo in alto a sinistra -->
-    <img src="static/LogoNewChiaiaFitness.png" alt="Logo" class="logo">
+    <img src="LogoNewChiaiaFitness.png" alt="Logo" class="logo">
 
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
