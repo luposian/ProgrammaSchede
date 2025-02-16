@@ -150,9 +150,29 @@ def index():
         email_destinatario = request.form.get('email', '')
         scadenza = request.form.get('scadenza', 'Senza Scadenza')
 
-        pdf_path = generate_pdf([], nome_cliente=nome_cliente, scadenza=scadenza)
+        # 🏋️‍♂️ Estrazione degli allenamenti
+        allenamenti = []
+        for i in range(3):  # Supponiamo al massimo 3 allenamenti
+            esercizi = request.form.getlist(f'esercizio_{i}[]')
+            serie = request.form.getlist(f'serie_{i}[]')
+            ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
+            tipo = request.form.getlist(f'tipo_{i}[]')
+
+            if esercizi and serie and ripetizioni and tipo:
+                allenamenti.append(list(zip(esercizi, serie, ripetizioni, tipo)))
+
+        # 🚨 Controlla se ci sono dati validi prima di generare il PDF
+        if not allenamenti:
+            return "Errore: Nessun allenamento fornito!", 400
+
+        pdf_path = generate_pdf(allenamenti, nome_cliente=nome_cliente, scadenza=scadenza)
+
+        # 🚨 Controllo se il PDF è stato generato correttamente
+        if not pdf_path or not os.path.exists(pdf_path):
+            return "Errore: Generazione del PDF fallita!", 500
+
         return send_file(pdf_path, as_attachment=True)
-    
+
     return render_template("index.html")
 
 if __name__ == '__main__':
