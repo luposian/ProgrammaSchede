@@ -132,23 +132,32 @@ form {
     <script>
 let allenamentiContainer = document.getElementById('allenamenti');
 let allenamentoIndex = 0;
-let inCircuito = false; // Variabile per identificare se siamo in un circuito
+let inCircuito = false;
 
 function aggiungiAllenamento() {
-        let allenamentiContainer = document.getElementById('allenamenti');
-        let divAllenamento = document.createElement('div');
-        divAllenamento.classList.add("allenamento");
-        divAllenamento.innerHTML = `
-            <h3>Allenamento ${allenamentoIndex + 1}</h3>
-            <div id="esercizi_${allenamentoIndex}"></div>
-            <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
-            <button type="button" class="btn btn-primary" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
-            <button type="button" class="btn btn-warning" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
-            <button type="button" class="btn btn-danger" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>
-        `;
-        allenamentiContainer.appendChild(divAllenamento);
-        allenamentoIndex++;
+    console.log("Funzione aggiungiAllenamento chiamata!"); // Debug
+    if (!allenamentiContainer) {
+        console.error("Errore: div allenamenti non trovato!");
+        return;
     }
+
+    let divAllenamento = document.createElement('div');
+    divAllenamento.classList.add("allenamento");
+    divAllenamento.innerHTML = `
+        <h3>Allenamento ${allenamentoIndex + 1}</h3>
+        <div id="esercizi_${allenamentoIndex}"></div>
+        <button type="button" class="btn btn-success" onclick="aggiungiEsercizio(${allenamentoIndex})">Aggiungi Esercizio</button>
+        <button type="button" class="btn btn-primary" onclick="aggiungiSuperserie(${allenamentoIndex})">Aggiungi Superserie</button>
+        <button type="button" class="btn btn-warning" onclick="iniziaCircuito(${allenamentoIndex})">Inizia Circuito</button>
+        <button type="button" class="btn btn-danger" onclick="terminaCircuito(${allenamentoIndex})" id="terminaCircuito_${allenamentoIndex}" style="display: none;">Termina Circuito</button>`;
+    allenamentiContainer.appendChild(divAllenamento);
+    allenamentoIndex++;
+}
+
+    document.addEventListener("DOMContentLoaded", function() {
+    console.log("JavaScript caricato correttamente!");
+    });
+
 
 function aggiungiEsercizio(index, tipo = "Normale") {
     let eserciziContainer = document.getElementById(`esercizi_${index}`);
