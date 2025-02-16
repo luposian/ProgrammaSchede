@@ -152,7 +152,7 @@ def index():
 
         # 🏋️‍♂️ Estrazione degli allenamenti
         allenamenti = []
-        for i in range(3):  # Supponiamo al massimo 3 allenamenti
+        for i in range(3):  
             esercizi = request.form.getlist(f'esercizio_{i}[]')
             serie = request.form.getlist(f'serie_{i}[]')
             ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
@@ -165,15 +165,40 @@ def index():
         if not allenamenti:
             return "Errore: Nessun allenamento fornito!", 400
 
+        # 📝 Genera il PDF
         pdf_path = generate_pdf(allenamenti, nome_cliente=nome_cliente, scadenza=scadenza)
 
         # 🚨 Controllo se il PDF è stato generato correttamente
         if not pdf_path or not os.path.exists(pdf_path):
             return "Errore: Generazione del PDF fallita!", 500
 
+        # 🔍 Controlla se il cliente esiste già nel database
+        cliente_esistente = Cliente.query.filter_by(email=email_destinatario).first()
+
+        if cliente_esistente:
+            # 📌 Se esiste, aggiorna i dati
+            cliente_esistente.nome = nome_cliente
+            cliente_esistente.scadenza = datetime.strptime(scadenza, "%Y-%m-%d")
+            cliente_esistente.scheda_pdf = pdf_path
+            cliente_esistente.scheda_dati = allenamenti
+        else:
+            # 🆕 Se non esiste, crea un nuovo cliente
+            nuovo_cliente = Cliente(
+                nome=nome_cliente,
+                email=email_destinatario,
+                scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
+                scheda_pdf=pdf_path,
+                scheda_dati=allenamenti
+            )
+            db.session.add(nuovo_cliente)
+
+        # ✅ Salva nel database
+        db.session.commit()
+
         return send_file(pdf_path, as_attachment=True)
 
     return render_template("index.html")
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
