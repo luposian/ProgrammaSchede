@@ -86,40 +86,38 @@ class CustomPDF(FPDF):
         pass
 
 def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sconosciuto", scadenza="Senza Scadenza"):
+    if not data_list:
+        print("⚠️ Nessun dato ricevuto per generare il PDF.")
+        return None
+
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
 
-    # Creazione copertina
     pdf.add_page()
     x_offset_cover = 90  
     pdf.set_xy(x_offset_cover, 20)
     logo_path = "LogoNewChiaiaFitness.png"
-    pdf.image(logo_path, x=x_offset_cover, y=20, w=110)
+
+    if os.path.exists(logo_path):
+        pdf.image(logo_path, x=x_offset_cover, y=20, w=110)
+    else:
+        print(f"⚠️ Il file logo {logo_path} non esiste!")
+
     pdf.ln(70)
 
     pdf.set_font("Arial", "B", 14)
     pdf.set_xy(20, pdf.get_y())
     pdf.cell(140, 10, f"Nome: {nome_cliente}", ln=True, align='L')
-    pdf.set_xy(20, pdf.get_y() + 5)
     pdf.cell(140, 10, f"Fino al: {scadenza}", ln=True, align='L')
-    pdf.set_xy(20, pdf.get_y() + 5)
-    pdf.set_text_color(0, 0, 255)
-    pdf.cell(140, 10, "Blu = Superserie", ln=True, align='L')
-    pdf.set_xy(20, pdf.get_y() + 5)
-    pdf.set_text_color(255, 102, 102)
-    pdf.cell(140, 10, "Rosso = Circuiti", ln=True, align='L')
-    pdf.set_text_color(0, 0, 0)
+
     pdf.ln(10)
 
-    # Stampa delle tabelle, una per pagina dalla seconda in poi
     for idx, esercizi in enumerate(data_list):
-        pdf.add_page()  # Ogni tabella su una nuova pagina
-
+        pdf.add_page()
         pdf.set_font("Arial", "B", 12)
         pdf.cell(200, 10, f"Allenamento {idx + 1}", ln=True, align="C")
         pdf.ln(5)
 
-        # Intestazione tabella
         pdf.set_fill_color(0, 102, 204)
         pdf.set_text_color(255, 255, 255)
         pdf.set_font("Arial", "B", 10)
@@ -130,37 +128,24 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sco
 
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("Arial", size=10)
-        last_type = None
-        series_value = None
 
         for row in esercizi:
             esercizio, serie, ripetizioni, tipo = row
-
-            # Assegna il colore corretto
             if tipo == "Superserie":
                 pdf.set_fill_color(173, 216, 230)  # Blu
             elif tipo == "Circuito":
                 pdf.set_fill_color(255, 102, 102)  # Rosso
             else:
-                pdf.set_fill_color(255, 255, 255)  # Normale
-
-            if tipo in ["Superserie", "Circuito"]:
-                if last_type != tipo:
-                    series_value = serie
-                series_display = str(series_value) if last_type == tipo else str(serie)
-            else:
-                series_display = str(serie)
-                series_value = None
+                pdf.set_fill_color(255, 255, 255)
 
             pdf.cell(65, 10, esercizio, border=1, fill=True)
-            pdf.cell(30, 10, series_display, border=1, align='C', fill=True)
+            pdf.cell(30, 10, str(serie), border=1, align='C', fill=True)
             pdf.cell(40, 10, str(ripetizioni), border=1, align='C', fill=True)
             pdf.ln()
-            last_type = tipo
 
-    # Salva il PDF in una cartella accessibile
     output_path = os.path.join(os.getcwd(), filename)
     pdf.output(output_path)
+    print(f"✅ PDF salvato correttamente: {output_path}")
 
     return output_path
 
