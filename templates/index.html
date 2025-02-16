@@ -42,6 +42,42 @@
             font-size: 14px;
         }
 
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary { 
+            background: linear-gradient(to right, #007BFF, #0056b3);
+            color: white; 
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger { 
+            background: linear-gradient(to right, #dc3545, #a71d2a);
+            color: white;
+        }
+
+        .btn-success { 
+            background: linear-gradient(to right, #28a745, #1e7e34);
+            color: white; 
+        }
+
+        .btn-warning { 
+            background: linear-gradient(to right, #ffc107, #e0a800);
+            color: black; 
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
         .draggable {
             cursor: grab;
         }
@@ -52,7 +88,7 @@
     </style>
 </head>
 <body>
-    <img src="templates/LogoNewChiaiaFitness.png" alt="Logo" class="logo">
+    <img src="static/LogoNewChiaiaFitness.png" alt="Logo" class="logo">
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
         <a href="/clienti" class="btn btn-success">Vai alla gestione clienti</a>
