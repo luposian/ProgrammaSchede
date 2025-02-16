@@ -7,7 +7,7 @@
     <style>
         body { 
     font-family: Arial, sans-serif; 
-    background-color: #f4f4f4; 
+    background-color: #d3d3d3;  /* Grigio chiaro */ 
     text-align: center; 
 }
 
@@ -17,11 +17,20 @@
     background: white; 
     padding: 20px; 
     border-radius: 10px; 
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px; /* Distanza dal logo */
 }
 
 h2 { 
     margin-bottom: 25px; /* Spazio tra h2 e il bottone */
+}
+
+/* Stile del logo */
+.logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 80px; /* Imposta una dimensione più piccola */
 }
 
 .btn-primary { 
@@ -91,6 +100,9 @@ form {
     </style>
 </head>
 <body>
+      <!-- Logo in alto a sinistra -->
+    <img src="static/logo.png" alt="Logo" class="logo">
+
     <div class="container">
         <h2>Inserisci i dettagli della scheda</h2>
         <a href="/clienti" class="btn btn-success">Vai alla gestione clienti</a>
