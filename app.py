@@ -95,6 +95,10 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sco
     pdf = CustomPDF("L", "mm", "A4")
     pdf.set_auto_page_break(auto=True, margin=15)
 
+        # Assicura che la cartella static esista
+    if not os.path.exists("static"):
+        os.makedirs("static")
+
     pdf.add_page()
     x_offset_cover = 90  
     pdf.set_xy(x_offset_cover, 20)
@@ -145,11 +149,12 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sco
             pdf.cell(40, 10, str(ripetizioni), border=1, align='C', fill=True)
             pdf.ln()
 
-    output_path = os.path.join("static", filename)
-    pdf.output(output_path)
-    print(f"✅ PDF salvato correttamente: {output_path}")
+output_folder = "static/pdfs"
+os.makedirs(output_folder, exist_ok=True)  # Crea la cartella se non esiste
+output_path = os.path.join(output_folder, filename)
 
-    return output_path
+pdf.output(output_path)
+return output_path
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -189,7 +194,7 @@ def index():
             db.session.add(nuovo_cliente)
 
         db.session.commit()
-        return send_file(output_path, as_attachment=True)
+        return send_file(pdf_path, as_attachment=True)
 
 
     return render_template("index.html")
