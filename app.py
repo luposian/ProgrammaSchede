@@ -48,17 +48,32 @@ def clienti():
         clienti_lista = Cliente.query.with_entities(
             Cliente.id, Cliente.nome, Cliente.email, Cliente.scadenza, Cliente.scheda_pdf
         ).order_by(Cliente.scadenza).all()
+
+        for cliente in clienti_lista:
+            if cliente.scheda_pdf and not os.path.exists(cliente.scheda_pdf):
+                print(f"⚠️ File PDF {cliente.scheda_pdf} non trovato!")
+
         return render_template("clienti.html", clienti=clienti_lista)
     except Exception as e:
         return f"Errore durante il caricamento dei clienti: {e}"
 
+
 @app.route('/elimina_cliente/<int:cliente_id>')
 def elimina_cliente(cliente_id):
-    cliente = Cliente.query.get(cliente_id)
-    if cliente:
-        db.session.delete(cliente)
-        db.session.commit()
+    try:
+        cliente = Cliente.query.get(cliente_id)
+        if cliente:
+            db.session.delete(cliente)
+            db.session.commit()
+            print(f"✅ Cliente {cliente.nome} eliminato con successo!")
+        else:
+            print(f"⚠️ Cliente con ID {cliente_id} non trovato!")
+
+    except Exception as e:
+        print(f"❌ Errore durante l'eliminazione del cliente: {e}")
+
     return redirect(url_for('clienti'))
+
 
 @app.route('/modifica_scheda/<int:cliente_id>')
 def modifica_scheda(cliente_id):
@@ -143,9 +158,8 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sco
             pdf.ln()
             last_type = tipo
 
-    output_folder = os.path.expanduser("~/Downloads")
-    os.makedirs(output_folder, exist_ok=True)
-    output_path = os.path.join(output_folder, filename)
+    # Salva il PDF in una cartella accessibile
+    output_path = os.path.join(os.getcwd(), filename)
     pdf.output(output_path)
 
     return output_path
@@ -157,7 +171,6 @@ def index():
         nome_cliente = request.form.get('nome_cliente', 'Sconosciuto')
         email_destinatario = request.form.get('email', '')
         scadenza = request.form.get('scadenza', 'Senza Scadenza')
-        
 
         # Genera la scheda PDF
         allenamenti = []
@@ -171,33 +184,28 @@ def index():
 
         pdf_path = generate_pdf(allenamenti, nome_cliente=nome_cliente, scadenza=scadenza)
 
-        # Controlla se il cliente esiste già
         cliente_esistente = Cliente.query.filter_by(email=email_destinatario).first()
 
         if cliente_esistente:
-            # Aggiorna i dati del cliente esistente
             cliente_esistente.nome = nome_cliente
-            cliente_esistente.scadenza = datetime.strptime(scadenza, "%d-%m-%Y")
-            # Se esiste, aggiorna la scheda
-            cliente.scheda_pdf = pdf_path
-            cliente.scheda_dati = allenamenti  # Salva il formato JSON
+            cliente_esistente.scadenza = datetime.strptime(scadenza, "%Y-%m-%d")
+            cliente_esistente.scheda_pdf = pdf_path
+            cliente_esistente.scheda_dati = allenamenti
         else:
-            # Crea un nuovo cliente se non esiste
             nuovo_cliente = Cliente(
                 nome=nome_cliente,
                 email=email_destinatario,
-                scadenza=datetime.strptime(scadenza, "%d-%m-%Y"),
-                scheda_pdf = pdf_path,
-                scheda_dati = allenamenti  # Salva il formato JSON
+                scadenza=datetime.strptime(scadenza, "%Y-%m-%d"),
+                scheda_pdf=pdf_path,
+                scheda_dati=allenamenti
             )
-            db.session.add(cliente)
+            db.session.add(nuovo_cliente)
 
-        # Salva le modifiche nel database
         db.session.commit()
-
         return send_file(pdf_path, as_attachment=True)
 
     return render_template("index.html")
+
 
 
 if __name__ == '__main__':
