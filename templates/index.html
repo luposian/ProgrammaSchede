@@ -104,9 +104,6 @@ form {
             
             
             <div id="allenamenti">
-                    <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> 
-                    <br><br>
-                    <button type="submit" class="btn btn-primary">Genera Scheda</button>
                 {% if cliente and cliente.scheda_dati %}
                     {% for allenamento in cliente.scheda_dati %}
                         <div class="allenamento">
@@ -126,6 +123,10 @@ form {
                     {% endfor %}
                 {% endif %}
             </div>
+
+            <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> 
+            <br><br>
+           <button type="submit" class="btn btn-primary">Genera Scheda</button>
 
 
     <script>
