@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -24,6 +25,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Configura un pool di connessioni con pre-ping
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], pool_pre_ping=True)
 db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
+migrate = Migrate(app, db)  # Inizializzazione di Flask-Migrate
 
 
 # Modello della tabella Cliente
