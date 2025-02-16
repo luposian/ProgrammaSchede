@@ -145,7 +145,7 @@ def generate_pdf(data_list, filename="Scheda_Allenamento.pdf", nome_cliente="Sco
             pdf.cell(40, 10, str(ripetizioni), border=1, align='C', fill=True)
             pdf.ln()
 
-    output_path = os.path.join(os.getcwd(), filename)
+    output_path = os.path.join("static", filename)
     pdf.output(output_path)
     print(f"✅ PDF salvato correttamente: {output_path}")
 
