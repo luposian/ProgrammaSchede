@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Clienti</title>
+     <!-- ✅ Aggiungi il logo come favicon -->
+    <link rel="icon" type="image/png" href="static/LogoNewChiaiaFitness.png">
     <style>
         body { 
             font-family: Arial, sans-serif; 
@@ -98,7 +100,7 @@
                     <td>{{ cliente.email }}</td>
                     <td>{{ cliente.scadenza }}</td>
                     <td>
-                        <a href="{{ url_for('scarica_scheda', cliente_id=cliente.id) }}" class="btn btn-primary">Scarica PDF</a>
+                        <a href="{{ url_for('scarica_scheda', cliente_id=cliente.id) }}" class="btn btn-primary">Scarica Scheda</a>
                         <a href="{{ url_for('modifica_scheda', cliente_id=cliente.id) }}" class="btn btn-warning">Modifica</a>
                         <a href="{{ url_for('elimina_cliente', cliente_id=cliente.id) }}" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo cliente?');">Elimina</a>
                     </td>
