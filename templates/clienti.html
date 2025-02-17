@@ -5,83 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Clienti</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #a0a0a0; /* Grigio medio-scuro */
+            text-align: center; 
+            color: white;
         }
+
+        .container { 
+            width: 80%;
+            margin: auto;
+            background: #333333; /* Grigio scuro */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+            color: white;
+        }
+
+        .btn-primary { 
+            background: linear-gradient(to right, #007BFF, #0056b3);
+        }
+
+        .btn-danger { 
+            background: linear-gradient(to right, #dc3545, #a71d2a);
+        }
+
+        .btn-success { 
+            background: linear-gradient(to right, #28a745, #1e7e34);
+        }
+
+        .btn-warning { 
+            background: linear-gradient(to right, #ffc107, #e0a800);
+            color: black;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background: #444444; /* Grigio più scuro */
+            color: white;
         }
+
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+            padding: 10px;
+            border: 1px solid #666;
+            text-align: center;
         }
+
         th {
-            background-color: #007BFF;
-            color: white;
-        }
-        .delete-button {
-            background-color: red;
-            color: white;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .delete-button:hover {
-            background-color: darkred;
-        }
-        .manage-clients-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            background-color: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .manage-clients-button:hover {
-            background-color: #218838;
-        }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .back-button:hover {
-            background-color: #0056b3;
+            background: #222222;
         }
     </style>
 </head>
 <body>
-    <h1>Gestione Clienti</h1>
-    <a href="/" class="back-button">Torna alla Home</a>
-    <a href="/clienti" class="manage-clients-button">Vai alla gestione clienti</a>
-    <table>
-        <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Scadenza</th>
-            <th>Scarica Scheda</th>
-            <th>Modifica</th>
-            <th>Azioni</th>
-        </tr>
-        {% for cliente in clienti %}
-        <tr>
-            <td>{{ cliente.nome }}</td>
-            <td>{{ cliente.email }}</td>
-            <td>{{ cliente.scadenza }}</td>
-            <td><a href="{{ cliente.scheda_pdf }}" download>Scarica</a></td>
-            <td><a href="/modifica_scheda/{{ cliente.id }}" class="btn btn-warning">Modifica</a></td>
-            <td><a href="/elimina_cliente/{{ cliente.id }}" class="delete-button">Elimina</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <h2>Gestione Clienti</h2>
+        <a href="/" class="btn btn-success">Torna alla Home</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Scadenza</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clienti %}
+                <tr>
+                    <td>{{ cliente.nome }}</td>
+                    <td>{{ cliente.email }}</td>
+                    <td>{{ cliente.scadenza }}</td>
+                    <td>
+                        <a href="{{ url_for('scarica_scheda', cliente_id=cliente.id) }}" class="btn btn-primary">Scarica PDF</a>
+                        <a href="{{ url_for('modifica_scheda', cliente_id=cliente.id) }}" class="btn btn-warning">Modifica</a>
+                        <a href="{{ url_for('elimina_cliente', cliente_id=cliente.id) }}" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo cliente?');">Elimina</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
