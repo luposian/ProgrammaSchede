@@ -15,7 +15,8 @@
         }
 
         .container { 
-            width: 80%;
+            width: 90%;
+            max-width: 500px; /* Limite massimo per non essere troppo largo */
             margin: auto;
             background: #333333; /* Grigio scuro */
             padding: 20px;
@@ -32,12 +33,14 @@
             padding: 10px 15px;
             border: none;
             cursor: pointer;
-            margin: 5px;
+            margin: 10px 0;  /* Spazio sopra e sotto ogni bottone */
             border-radius: 5px;
             font-size: 14px;
             font-weight: bold;
             transition: 0.3s;
             color: white;
+            display: block; /* Ogni bottone va su una nuova riga */
+            width: 100%;  /* Bottoni più larghi per il tocco su mobile */
         }
 
         .btn-primary { 
