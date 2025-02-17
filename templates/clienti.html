@@ -101,6 +101,7 @@
                     <td>{{ cliente.scadenza }}</td>
                     <td>
                         <a href="{{ url_for('scarica_scheda', cliente_id=cliente.id) }}" class="btn btn-primary">Scarica Scheda</a>
+                        <a href="{{ url_for('invia_scheda', cliente_id=cliente.id) }}" class="btn btn-warning">Consegna Scheda</a>
                         <a href="{{ url_for('modifica_scheda', cliente_id=cliente.id) }}" class="btn btn-warning">Modifica</a>
                         <a href="{{ url_for('elimina_cliente', cliente_id=cliente.id) }}" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo cliente?');">Elimina</a>
                     </td>
