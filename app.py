@@ -195,7 +195,7 @@ def index():
 
         # 🏋️‍♂️ Estrazione degli allenamenti
         allenamenti = []
-        for i in range(3):  
+        for i in range(10):  
             esercizi = request.form.getlist(f'esercizio_{i}[]')
             serie = request.form.getlist(f'serie_{i}[]')
             ripetizioni = request.form.getlist(f'ripetizioni_{i}[]')
@@ -238,7 +238,7 @@ def index():
         # ✅ Salva nel database
         db.session.commit()
 
-        return send_file(pdf_path, as_attachment=True)
+        return redirect(url_for('clienti'))
 
     return render_template("index.html")
 
