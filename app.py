@@ -74,6 +74,15 @@ def modifica_scheda(cliente_id):
     cliente = Cliente.query.get_or_404(cliente_id)
     return render_template("index.html", cliente=cliente)
 
+@app.route('/scarica_scheda/<int:cliente_id>')
+def scarica_scheda(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+
+    if cliente.scheda_pdf and os.path.exists(cliente.scheda_pdf):
+        return send_file(cliente.scheda_pdf, as_attachment=True)
+    else:
+        return "Errore: Il file della scheda non esiste", 404
+
 class CustomPDF(FPDF):
     def header(self):
         pass
