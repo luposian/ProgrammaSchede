@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
+from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
@@ -24,6 +25,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], pool_pre_ping=True)
 db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
 migrate = Migrate(app, db)
+
+# Configura Flask-Mail per l'invio delle email
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Cambia se usi un altro provider (es: Outlook)
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'schedenewchiaiafitness@gmail.com'  # 🔹 Inserisci la tua email
+app.config['MAIL_PASSWORD'] = 'Luciotto10.'  # 🔹 Inserisci la password o App Password
+app.config['MAIL_DEFAULT_SENDER'] = ('New Chiaia Fitness', 'schedenewchiaiafitness@gmail.com')
+
+mail = Mail(app)  # Inizializza Flask-Mail
+
 
 # Modello della tabella Cliente
 class Cliente(db.Model):
@@ -82,6 +95,27 @@ def scarica_scheda(cliente_id):
         return send_file(cliente.scheda_pdf, as_attachment=True)
     else:
         return "Errore: Il file della scheda non esiste", 404
+
+@app.route('/invia_scheda/<int:cliente_id>')
+def invia_scheda(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+
+    if cliente.scheda_pdf and os.path.exists(cliente.scheda_pdf):
+        try:
+            msg = Message("Scheda New Chiaia Fitness", recipients=[cliente.email])
+            msg.body = f"Ciao {cliente.nome},\n\nIn allegato trovi la tua scheda di allenamento.\n\nNew Chiaia Fitness."
+            
+            with app.open_resource(cliente.scheda_pdf) as pdf:
+                msg.attach("Scheda_Allenamento.pdf", "application/pdf", pdf.read())
+
+            mail.send(msg)
+            return redirect(url_for('clienti'))
+        
+        except Exception as e:
+            return f"Errore nell'invio dell'email: {e}"
+    
+    return "Errore: Il file della scheda non esiste", 404
+
 
 class CustomPDF(FPDF):
     def header(self):
