@@ -103,32 +103,32 @@
             <label for="scadenza">Scadenza Scheda:</label>
             <input type="date" name="scadenza" value="{{ cliente.scadenza if cliente else '' }}" required><br>
             
-            <div id="allenamenti">
-                {% if cliente and cliente.scheda_dati %}
-                    {% for allenamento in cliente.scheda_dati %}
-                        <div class="allenamento">
-                            <h3>Allenamento {{ loop.index }}</h3>
-                            <div id="esercizi_{{ loop.index }}">
-                                {% for esercizio in allenamento %}
-                                    <div class="input-group draggable" draggable="true">
-                                        <input type="text" name="esercizio_{{ loop.index }}[]" value="{{ esercizio[0] }}" required>
-                                        <input type="number" name="serie_{{ loop.index }}[]" value="{{ esercizio[1] }}" required>
-                                        <input type="number" name="ripetizioni_{{ loop.index }}[]" value="{{ esercizio[2] }}" required>
-                                        <select name="tipo_{{ loop.index }}[]">
-                                            <option value="Normale" {% if esercizio[3] == "Normale" %}selected{% endif %}>Normale</option>
-                                            <option value="Superserie" {% if esercizio[3] == "Superserie" %}selected{% endif %}>Superserie</option>
-                                            <option value="Circuito" {% if esercizio[3] == "Circuito" %}selected{% endif %}>Circuito</option>
-                                        </select>
-                                        <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
-                                        <button type="button" class="btn btn-primary" onclick="spostaSu(this)">🔼</button>
-                                        <button type="button" class="btn btn-primary" onclick="spostaGiu(this)">🔽</button>
-                                    </div>
-                                {% endfor %}
-                            </div>
+        <div id="allenamenti">
+            {% if cliente and cliente.scheda_dati %}
+                {% for allenamento in cliente.scheda_dati %}
+                    <div class="allenamento">
+                        <h3>Allenamento {{ loop.index }}</h3>
+                        <div id="esercizi_{{ loop.index }}">
+                            {% for esercizio in allenamento %}
+                                <div class="input-group draggable" draggable="true">
+                                    <input type="text" name="esercizio_{{ loop.index }}[]" value="{{ esercizio[0] }}" required>
+                                    <input type="number" name="serie_{{ loop.index }}[]" value="{{ esercizio[1] }}" required>
+                                    <input type="number" name="ripetizioni_{{ loop.index }}[]" value="{{ esercizio[2] }}" required>
+                                    <select name="tipo_{{ loop.index }}[]">
+                                        <option value="Normale" {% if esercizio[3] == "Normale" %}selected{% endif %}>Normale</option>
+                                        <option value="Superserie" {% if esercizio[3] == "Superserie" %}selected{% endif %}>Superserie</option>
+                                        <option value="Circuito" {% if esercizio[3] == "Circuito" %}selected{% endif %}>Circuito</option>
+                                    </select>
+                                    <button type="button" class="btn btn-danger" onclick="rimuoviEsercizio(this)">Rimuovi</button>
+                                    <button type="button" class="btn btn-primary" onclick="spostaSu(this)">🔼</button>
+                                    <button type="button" class="btn btn-primary" onclick="spostaGiu(this)">🔽</button>
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
 
             <button type="button" class="btn btn-success" onclick="aggiungiAllenamento()">Aggiungi Allenamento</button> 
             <br><br>
@@ -204,15 +204,16 @@
 
 
         document.addEventListener("DOMContentLoaded", function () {
-            document.addEventListener("dragover", function (e) {
-                e.preventDefault();
-                const dragging = document.querySelector(".dragging");
-                const closest = document.elementFromPoint(e.clientX, e.clientY);
-                if (closest && closest.classList.contains("draggable")) {
-                    closest.parentNode.insertBefore(dragging, closest.nextSibling);
-                }
+            let eserciziContainers = document.querySelectorAll(".sortable");
+        
+            eserciziContainers.forEach(container => {
+                new Sortable(container, {
+                    animation: 150,
+                    ghostClass: "dragging"
+                });
             });
         });
+
     </script>
 </body>
 </html>
