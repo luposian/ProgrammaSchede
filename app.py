@@ -32,7 +32,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'schedenewchiaiafitness@gmail.com'  # 🔹 Inserisci la tua email
-app.config['MAIL_PASSWORD'] = 'Luciotto10.'  # 🔹 Inserisci la password o App Password
+app.config['MAIL_PASSWORD'] = 'lipc msuh kpqj fsdl'  # 🔹 Inserisci la password o App Password
 app.config['MAIL_DEFAULT_SENDER'] = ('New Chiaia Fitness', 'schedenewchiaiafitness@gmail.com')
 
 mail = Mail(app)  # Inizializza Flask-Mail
